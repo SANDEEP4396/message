@@ -1,3 +1,26 @@
+server:
+  port: 9010
+
 spring:
   application:
-    name: message
+    name: "message"
+  cloud:
+    function:
+      definition: email|sms # This configuration defines two Spring Cloud Function beans named "email" and "sms". The "definition" property specifies that both functions should be registered as beans in the application context, allowing them to be invoked as part of the application's functionality. This setup is commonly used in event-driven architectures where different functions can be triggered based on specific events or messages, such as sending an email or an SMS notification.
+    stream:
+      bindings:
+        emailsms-in-0:
+          content-type: application/json
+          destination: send-communication # This configuration sets the destination for the "emailsms-in-0" binding to "send-communication". This means that the application will listen for messages on the "send-communication" topic or queue, and when a message is received, it will be processed by the function associated with this binding (e.g., the "email" or "sms" function defined in the previous configuration). This setup is commonly used in event-driven architectures where different functions can be triggered based on specific events or messages, such as sending an email or an SMS notification when a certain event occurs.
+          group: ${spring.application.name} # This configuration sets the consumer group for the "emailsms-in-0" binding to "message-group". In a messaging system like RabbitMQ or Kafka, a consumer group allows multiple instances of an application to share the workload of processing messages from a topic or queue. By assigning the same consumer group to multiple instances of the application, you can achieve load balancing and ensure that messages are processed by only one instance in the group. This is particularly useful for scaling the application horizontally and improving its performance and reliability when handling a large volume of messages.
+      rabbit:
+        bindings:
+          emailsms-in-0:
+            consumer:
+              auto-bind-dlq: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
