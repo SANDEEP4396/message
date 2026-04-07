@@ -13,14 +13,21 @@ spring:
           content-type: application/json
           destination: send-communication # This configuration sets the destination for the "emailsms-in-0" binding to "send-communication". This means that the application will listen for messages on the "send-communication" topic or queue, and when a message is received, it will be processed by the function associated with this binding (e.g., the "email" or "sms" function defined in the previous configuration). This setup is commonly used in event-driven architectures where different functions can be triggered based on specific events or messages, such as sending an email or an SMS notification when a certain event occurs.
           group: ${spring.application.name} # This configuration sets the consumer group for the "emailsms-in-0" binding to "message-group". In a messaging system like RabbitMQ or Kafka, a consumer group allows multiple instances of an application to share the workload of processing messages from a topic or queue. By assigning the same consumer group to multiple instances of the application, you can achieve load balancing and ensure that messages are processed by only one instance in the group. This is particularly useful for scaling the application horizontally and improving its performance and reliability when handling a large volume of messages.
-      rabbit:
-        bindings:
-          emailsms-in-0:
-            consumer:
-              auto-bind-dlq: true
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    connection-timeout: 10s
+        emailsms-out-0: # If we need to send messages to another topic or queue, we can define an output binding like this. The "emailsms-out-0" binding can be used to send messages to a different destination, allowing the application to produce messages in addition to consuming them.
+          content-type: application/json
+          destination: communication-sent
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+#      rabbit:
+#        bindings:
+#          emailsms-in-0:
+#            consumer:
+#              auto-bind-dlq: true
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#    connection-timeout: 10s
